@@ -1,0 +1,86 @@
+{{extend 'layout.html'}}
+
+<h2>
+{{=T('Sign Up') if request.args(0) == 'register' else T('Log In') if request.args(0) == 'login' else T(request.args(0).replace('_',' ').title())}}
+</h2>
+
+{{=form.custom.begin}}
+{{
+if request.args(0)=='login':
+    if not 'register' in auth.settings.actions_disabled:
+}}
+        <div class="form-group">
+            <label for="auth_user_email">Email</label>
+            {{=form.custom.widget.email}}
+        </div>
+        <div class="form-group">
+            <label for="auth_user_password">Password</label>
+            {{=form.custom.widget.password}}
+        </div>
+        <div class="form-group">
+            {{=form.custom.submit}}
+            {{if not 'request_reset_password' in auth.settings.actions_disabled:}}
+                {{=A('Forget Password?', _href=URL('default', 'user/request_reset_password'))}}
+            {{pass}}
+        </div>
+{{
+    pass
+elif request.args(0)=='register':
+    if not 'register' in auth.settings.actions_disabled:
+}}
+        <div class="form-group">
+            <label for="auth_user_email">Email</label>
+            {{=form.custom.widget.email}}
+        </div>
+        <div class="form-group">
+            <label for="auth_user_password">Password</label>
+            {{=form.custom.widget.password}}
+        </div>
+        <div class="form-group">
+            <label for="auth_user_password_two">Confirm Password</label>
+            {{=form.custom.widget.password_two}}
+        </div>
+        <div class="form-group">
+            {{=form.custom.submit}}
+        </div>
+{{
+    pass
+elif request.args(0)=='request_reset_password':
+}}
+    <div class="form-group">
+        <label for="auth_user_email">Email</label>
+        {{=form.custom.widget.email}}
+    </div>
+    <div class="form-group">
+        {{=form.custom.submit}}
+    </div>
+{{
+elif request.args(0)=='reset_password':
+}}
+    <div class="form-group">
+        <label for="no_table_new_password">New Password</label>
+        {{=form.custom.widget.new_password}}
+    </div>
+    <div class="form-group">
+        <label for="no_table_new_password_two">Verify Password</label>
+        {{=form.custom.widget.new_password2}}
+    </div>
+    <div class="form-group">
+        {{=form.custom.submit}}
+    </div>
+{{
+pass
+}}
+
+{{=form.custom.end}}
+
+{{block page_js}}
+<script>
+    jQuery("#web2py_user_form input:visible:enabled:first").focus();
+{{if request.args(0)=='register':}}
+    web2py_validate_entropy(jQuery('#auth_user_password'),100);
+{{elif request.args(0)=='change_password':}}
+    web2py_validate_entropy(jQuery('#no_table_new_password'),100);
+{{pass}}
+</script>
+{{end page_js}}
